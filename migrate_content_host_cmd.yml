@@ -3,18 +3,24 @@
   hosts: all
 
   tasks:
-    - name : Unsubscribe from old satellite
+    - name : Unregister from the satellite and clean subscriptions
       command:  >
+        rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
         subscription-manager remove --all ;
-        subscription-manager unregister ;
+        subscription-manager unregister 2>/dev/null ;
         rm -fr /var/cache/dnf/* ;
         subscription-manager clean ;
-        yum clean all ;
+        yum clean all 
+      ignore_errors: true
 
-    - name : Subscribe to the new Satellite
+    - name : Register hosts to the Satellite 
       command:  >
-        subscription-manager register --org="ACME" --activationkey="ak8" ;
+        yum localinstall -y http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm ;
+        subscription-manager register --org="ACME" --activationkey="ak8"  --force ;
         subscription-manager refresh ;
         subscription-manager attach --auto ;
-        yum repolist all ;
-        
+        yum repolist all
+      ignore_errors: true
+
+    
+

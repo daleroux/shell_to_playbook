@@ -1,0 +1,7 @@
+---
+- name: Migrate content hosts from old satellite into the new Satellite server
+  hosts: all
+
+  tasks:
+    - name: "Yum localinstall from satellite katello certificate"
+
