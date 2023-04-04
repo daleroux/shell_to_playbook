@@ -1,0 +1,20 @@
+---
+- name: Migrate content hosts from old satellite into the new Satellite server
+  hosts: all
+
+  tasks:
+    - name : Unsubscribe from old satellite
+      command:  >
+        subscription-manager remove --all ;
+        subscription-manager unregister ;
+        rm -fr /var/cache/dnf/* ;
+        subscription-manager clean ;
+        yum clean all ;
+
+    - name : Subscribe to the new Satellite
+      command:  >
+        subscription-manager register --org="ACME" --activationkey="ak8" ;
+        subscription-manager refresh ;
+        subscription-manager attach --auto ;
+        yum repolist all ;
+        

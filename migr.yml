@@ -1,0 +1,47 @@
+---
+- name: Migrate content hosts from old satellite into the new Satellite server
+  hosts: all
+
+  tasks:
+    - name : remove subscriptions
+      command:  >
+        subscription-manager remove --all 
+
+    - name : unregister from the satellite
+      command:  >
+        subscription-manager unregister 2>/dev/null
+      ignore_errors: true
+
+    - name : clean the dnf cache
+      command:  >
+        rm -fr /var/cache/dnf/* 
+
+    - name : subscription-manager clean
+      command:  >
+        subscription-manager clean 
+
+    - name : yum clean all
+      command:  >
+        yum clean all 
+
+        
+  tasks:
+    - name : Install the katello certificate from the Satellite
+      command:  >
+        yum localinstall -y http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm
+
+    - name : subscription-manager register --org="ACME" --activationkey="ak8"
+      command:  >
+        subscription-manager register --org="ACME" --activationkey="ak8"
+
+    - name : subscription-manager refresh
+      command:  >
+        subscription-manager refresh
+
+    - name : subscription-manager attach --auto
+      command:  >
+        subscription-manager attach --auto
+
+    - name : yum repolist all
+      command:  >
+        yum repolist all

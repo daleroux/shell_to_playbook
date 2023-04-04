@@ -1,0 +1,23 @@
+---
+- name: Migrate content hosts from old satellite into the new Satellite server
+  hosts: all
+
+  tasks:
+    - name : Unregister from the satellite and clean subscriptions
+      command:  >
+        rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
+        subscription-manager remove --all ;
+        subscription-manager unregister 2>/dev/null ;
+        rm -fr /var/cache/dnf/* ;
+        subscription-manager clean ;
+        yum clean all 
+      ignore_errors: true
+
+    - name : Register hosts to the Satellite 
+      command:  >
+        yum localinstall -y http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm ;
+        subscription-manager register --org="ACME" --activationkey="ak8"  --force ;
+        subscription-manager refresh ;
+        subscription-manager attach --auto ;
+        yum repolist all
+      ignore_errors: true
