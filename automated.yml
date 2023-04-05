@@ -28,13 +28,14 @@
         state: "present"
 
     - name: "Register the output from yum repolist all "
-      command: yum repolist all
-      register: yum_respos
+      shell: yum repolist all
+      register: command_output
 
     - name: "Print out the list of respos for the system"
-      debug:  var=yum_repos
+      debug:  
+              var: command_output.stdout_lines
 
-      
+
          
 
 
