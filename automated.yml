@@ -3,5 +3,21 @@
   hosts: all
 
   tasks:
-    - name: "Yum localinstall from satellite katello certificate"
 
+    - name: "Download katello rpm"
+      ansible.builtin.get_url:
+        url: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm
+        dest: /tmp/katello-ca-consumer-latest.noarch.rpm
+        mode: '0644'
+
+    - name: "Localinstall the satellite katello RPM"
+      ansible.builtin.dnf:
+        name:  /tmp/katello-ca-consumer-latest.noarch.rpm
+        state: present
+        disable_gpg_check: true
+
+    - name: "Register to the Satellite with the activation key and organization"
+      community.general.redhat_subscription:
+        activationkey: "ak8"
+        org_id: "ACME"
+        force_register: true
