@@ -4,12 +4,16 @@
 
   tasks:
 
-    - name: "Download katello rpm"
-      ansible.builtin.get_url:
-        url: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm
-        dest: /tmp/katello-ca-consumer-latest.noarch.rpm
-        mode: '0644'
-
+    - name : Unregister from the satellite and clean subscriptions
+      command:  >
+        rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
+        subscription-manager remove --all ;
+        subscription-manager unregister 2>/dev/null ;
+        rm -fr /var/cache/dnf/* ;
+        subscription-manager clean ;
+        yum clean all 
+      ignore_errors: true
+      
     - name: "Localinstall the satellite katello RPM"
       ansible.builtin.dnf:
         name: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm 
@@ -22,7 +26,16 @@
         org_id: "ACME"
         force_register: true
         state: "present"
-        auto_attach: "true"
+
+    - name: "Register the output from yum repolist all "
+      command: yum repolist all
+      register: yum_respos
+
+    - name: "Print out the list of respos for the system"
+      debug:  var=yum_repos
+
+      
+         
 
 
 
