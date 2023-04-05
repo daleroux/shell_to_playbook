@@ -12,7 +12,7 @@
 
     - name: "Localinstall the satellite katello RPM"
       ansible.builtin.dnf:
-        name:  /tmp/katello-ca-consumer-latest.noarch.rpm
+        name: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm 
         state: present
         disable_gpg_check: true
 
@@ -21,3 +21,11 @@
         activationkey: "ak8"
         org_id: "ACME"
         force_register: true
+        state: "present"
+        auto_attach: "true"
+
+
+
+
+
+      
