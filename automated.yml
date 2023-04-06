@@ -4,9 +4,14 @@
 
   tasks:
 
+    - name: "remove rpm"
+      ansible.builtin.yum:
+        name: katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch
+        state: "absent"
+
     - name : Unregister from the satellite and clean subscriptions
       command:  >
-        rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
+        # rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
         subscription-manager remove --all ;
         subscription-manager unregister 2>/dev/null ;
         rm -fr /var/cache/dnf/* ;
