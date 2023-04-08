@@ -4,19 +4,21 @@
 
   tasks:
 
+    - name: "Unregister from the Satellite "
+      community.general.redhat_subscription:
+        state: "absent"
+
     - name: "remove rpm"
       ansible.builtin.yum:
         name: katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch
         state: "absent"
+      ignore_errors: true
 
-    - name : Unregister from the satellite and clean subscriptions
+    - name : "Perform cleanup"
       command:  >
-        # rpm -qe katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch ;
-        subscription-manager remove --all ;
-        subscription-manager unregister 2>/dev/null ;
-        rm -fr /var/cache/dnf/* ;
+        rm -fr /var/cache/dnf/* ; 
         subscription-manager clean ;
-        yum clean all 
+        yum clean all
       ignore_errors: true
       
     - name: "Localinstall the satellite katello RPM"
@@ -39,12 +41,3 @@
     - name: "Print out the list of respos for the system"
       debug:  
               var: command_output.stdout_lines
-
-
-         
-
-
-
-
-
-      
