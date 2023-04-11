@@ -35,8 +35,8 @@
     - name: "Register to the Satellite with the activation key and organization"
       community.general.redhat_subscription:
         activationkey: "{{ satellite_act_key }}"
-        org_id: "ACME"
-        state: "{{ satellite_org_id }}"
+        org_id: "{{ satellite_org_id }}"
+        state: present
 
     - name: "Register the output from yum repolist all "
       shell: yum repolist all
