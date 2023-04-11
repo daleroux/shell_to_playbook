@@ -1,6 +1,11 @@
 ---
 - name: Migrate content hosts from old satellite into the new Satellite server
   hosts: all
+  vars:
+    katello_old_to_remove: katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch
+    katello_new_uri: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm
+    satellite_act_key: ak8
+    satellite_org_id: ACME
 
   tasks:
 
@@ -10,7 +15,7 @@
 
     - name: "remove rpm"
       ansible.builtin.yum:
-        name: katello-ca-consumer-ariel.nleroux.ca-1.0-1.noarch
+        name: "{{ katello_old_to_remove }}"
         state: "absent"
       ignore_errors: true
 
@@ -23,15 +28,15 @@
       
     - name: "Localinstall the satellite katello RPM"
       ansible.builtin.dnf:
-        name: http://ariel.nleroux.ca/pub/katello-ca-consumer-latest.noarch.rpm 
+        name: "{{ katello_new_uri }}"
         state: present
         disable_gpg_check: true
 
     - name: "Register to the Satellite with the activation key and organization"
       community.general.redhat_subscription:
-        activationkey: "ak8"
+        activationkey: "{{ satellite_act_key }}"
         org_id: "ACME"
-        state: "present"
+        state: "{{ satellite_org_id }}"
 
     - name: "Register the output from yum repolist all "
       shell: yum repolist all
