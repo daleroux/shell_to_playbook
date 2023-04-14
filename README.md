@@ -1,1 +1,3 @@
-Example of playbook that turn shell commands ( manual ) into automated playbook.
+Example of two playbooks:
+ one is basically shell commands
+ the other is the equivalent using modules
